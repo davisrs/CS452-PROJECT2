@@ -255,7 +255,6 @@ int main (int argc, char** argv) {
 
 	/*set up the matricies*/
 	initMatrices(); 
-
 	
 	initRink();
 	initPuck();

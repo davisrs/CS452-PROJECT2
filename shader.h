@@ -64,7 +64,7 @@ GLuint createShaderRink(){
 
 
 	GLuint shaderID = glCreateProgram();
-	glBindFragDataLocation(shaderID, 0, "outColor");//**************/
+	glBindFragDataLocation(shaderID, 0, "outColor");//**http://open.gl/content/code/c3_multitexture.txt**/
 	glAttachShader(shaderID, vertexShaderID);
 	glAttachShader(shaderID, fragmentShaderID);
 	glLinkProgram(shaderID);
