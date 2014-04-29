@@ -1,20 +1,20 @@
 #version 130
-
-// Old - but no longer has to be between -1 and +1 because mM (below) can scale/rotate/translate it!
-in vec4 s_vPosition;
-
-// New matrix stuff! Note that "uniform" means "for all vertices" - they share this
-uniform mat4 mM;	// The matrix to convert into the world coordinate system
-uniform mat4 mV;	// The matrix to convert into the camera coordinate system
-uniform mat4 mP;	// The perspective matrix for depth
-
-in vec4 s_vColor;
-out vec4 color;
-
-void main () {
-	color = s_vColor;
-
-	// New way using matrix multiplication.  From local, to world, to camera, to NDCs
-	gl_Position = mP*mV*mM*s_vPosition;
-
+ 
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 1) in vec2 vertexUV;
+ 
+// Output data ; will be interpolated for each fragment.
+out vec2 UV;
+ 
+// Values that stay constant for the whole mesh.
+uniform mat4 MVP;
+ 
+void main(){
+ 
+    // Output position of the vertex, in clip space : MVP * position
+    gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
+ 
+    // UV of the vertex. No special space for this one.
+    UV = vertexUV;
 }

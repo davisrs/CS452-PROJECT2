@@ -1,9 +1,16 @@
+#include "SOIL.h"
+
+#include <string>
+#include <iostream>
+#include <fstream>
+
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include "MathHelper.h"		// NEW!
 #include "cube.h"
 #include "shader.h"
+
 
 
 
@@ -149,9 +156,40 @@ void keyboard( unsigned char key, int x, int y ){
     }
 }
 
+//LOAD the images
+int LoadGLTextures()// Load Bitmaps And Convert To Textures
+{
+    /* load an image file directly as a new OpenGL texture */
+    GLuint tex_2d = SOIL_load_OGL_texture
+        (
+        "rink.bmp",
+        SOIL_LOAD_AUTO,//we want the image as it is on the disk
+        SOIL_CREATE_NEW_ID,//tells SOIL to create a new ID for this texture
+        SOIL_FLAG_INVERT_Y//nearly all image formats are stored starting at the upper left corner, but OpenGL defines the origin of the image in the lower left corner. Thus flipping it vertically solves this discrepancy.
+        );
+ 
+    if(tex_2d == 0){
+        printf( "SOIL loading error: '%s'\n", SOIL_last_result() );
+        return false;
+        }
+ 
+ 
+    // Typical Texture Generation Using Data From The Bitmap
+    glBindTexture(GL_TEXTURE_2D, tex_2d);
+    
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_REPEAT );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT );
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);    // "Bind" the newly created texture : all future texture functions will modify this texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+ 
+    return true;                                        // Return Success
+}
+
 void initRink(){
 	
-
+	LoadGLTextures(); // Create and Load The Texture(s) 
+	glEnable(GL_TEXTURE_2D);// Enable Texture Mapping
 	shaderProgramRink = createShaderRink();
 	glUseProgram(shaderProgramRink);
 	
@@ -240,6 +278,10 @@ int main (int argc, char** argv) {
 	glutKeyboardFunc(keyboard);
 
 	glUseProgram(shaderProgramRink);
+	GLuint vTexCoord=glGetAttribLocation( program, "vTexCoord" );
+	glEnableVertexAttribArray(vTexCoord);
+	glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 0,BUFFER_OFFSET(offset) );
+	
 	glEnableVertexAttribArray(positionID);
 	glEnableVertexAttribArray(colorID);
 	
@@ -247,4 +289,3 @@ int main (int argc, char** argv) {
 	
 	return 0;
 }
-
