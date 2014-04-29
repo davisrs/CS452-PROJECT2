@@ -64,6 +64,7 @@ GLuint createShaderRink(){
 
 
 	GLuint shaderID = glCreateProgram();
+	glBindFragDataLocation(shaderID, 0, "outColor");//**************/
 	glAttachShader(shaderID, vertexShaderID);
 	glAttachShader(shaderID, fragmentShaderID);
 	glLinkProgram(shaderID);

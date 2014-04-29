@@ -1,8 +1,4 @@
-#include "SOIL.h"
-
-#include <string>
-#include <iostream>
-#include <fstream>
+//headers
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -11,8 +7,10 @@
 #include "cube.h"
 #include "shader.h"
 
-
-
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <SOIL.h>
 
 #define NUM_VERTICES num_vertices
 #define NUM_INDICES num_indices	
@@ -112,16 +110,6 @@ void render() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_QUADS);
 	glDrawElements (GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, NULL);
 
-	//glBindVertexArray(0);
-
-	//glUseProgram(shaderProgramPuck);
-	//glBindVertexArray(vaoPuck);
-	//glBindBuffer(GL_ARRAY_BUFFER, vboPuck);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_QUADS);
-	//glDrawElements (GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, NULL);
-
-
-
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
@@ -156,31 +144,12 @@ void keyboard( unsigned char key, int x, int y ){
     }
 }
 
-//LOAD the images
-int LoadGLTextures()// Load Bitmaps And Convert To Textures
-{
-    GLuint textures[2];
-    glGenTextures(2, textures);
-    int width, height;
-    unsigned char* image;
-    image = SOIL_load_image("img.png", &width, &height, 0, SOIL_LOAD_RGB);//SOIL uses features that aren't available in modern OpenGL. 
-    //Because of this we'll simply use SOIL as image loader and create the texture ourselves
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-              GL_UNSIGNED_BYTE, image);
-    SOIL_free_image_data(image);
-}
-
 void initRink(){
 	
-	LoadGLTextures(); // Create and Load The Texture(s) 
-	glEnable(GL_TEXTURE_2D);// Enable Texture Mapping
-	shaderProgramRink = createShaderRink();
-	glUseProgram(shaderProgramRink);
-	
+	//generate VAO
 	glGenVertexArrays(0, &vaoRink);
 	glBindVertexArray(vaoRink);
-	
+	// Create a Vertex Buffer Object and copy the vertex data to it
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Create the buffer, but don't load anything yet
@@ -193,17 +162,31 @@ void initRink(){
 	glGenBuffers(1, &indexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, NUM_INDICES*sizeof(GLuint), indices, GL_STATIC_DRAW);
+
+	//Generate and compile shaders	
+	shaderProgramRink = createShaderRink();
 	
+	//use shader
+	glUseProgram(shaderProgramRink);
+	// Specify the layout of the vertex data
 	positionID = glGetAttribLocation(shaderProgramRink, "s_vPosition");
-	colorID = glGetAttribLocation(shaderProgramRink, "s_vColor");
+	glEnableVertexAttribArray(positionID);
+	//glVertexAttribPointer(positionID, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	
+	colorID = glGetAttribLocation(shaderProgramRink, "s_vColor");
+	glEnableVertexAttribArray(colorID);
+	//glVertexAttribPointer(colorID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(vertices)));
+	
+	//Load Textures
+
+	//************************************************//
 	perspectiveMatrixID = glGetUniformLocation(shaderProgramRink, "mP");
 	viewMatrixID = glGetUniformLocation(shaderProgramRink, "mV");
 	modelMatrixID = glGetUniformLocation(shaderProgramRink, "mM");
 
-	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(vertices)));
-
+	
 }
 
 
@@ -243,11 +226,11 @@ void initPuck(){
 }
 
 int main (int argc, char** argv) {
-	
+	//initialize GLEW
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE|GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
-	glutCreateWindow("Index Buffers");
+	glutCreateWindow("Project 2: GOAL!");
 	glutReshapeFunc(changeViewport);
 	glutDisplayFunc(render);
 	glewInit();
@@ -263,10 +246,6 @@ int main (int argc, char** argv) {
 	glutKeyboardFunc(keyboard);
 
 	glUseProgram(shaderProgramRink);
-	GLuint vTexCoord=glGetAttribLocation( shaderProgramRink, "vTexCoord" );
-	glEnableVertexAttribArray(vTexCoord);
-	//glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 0,BUFFER_OFFSET(offset) );
-	
 	glEnableVertexAttribArray(positionID);
 	glEnableVertexAttribArray(colorID);
 	
