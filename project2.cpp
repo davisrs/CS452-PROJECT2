@@ -305,7 +305,7 @@ void initShaders (){
 	glVertexAttribPointer(colorID, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(offset));
 	
 	//textures -- texcoords are missing!
-	offset += sizeof(vertices) + sizeof(colors);
+	offset += sizeof(colors);
 	GLuint texAttrib = glGetAttribLocation(shaderProgramID, "texcoord");
 	glEnableVertexAttribArray(texAttrib);
 	//glVertexAttribPointer(textureID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
