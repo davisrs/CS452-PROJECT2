@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <vector>
-#include <string>
+#include <string.h>
 #include <fstream>
 #include <iostream>
 #include <SOIL.h>
@@ -113,7 +113,7 @@ void checkGoal(){
 }
 
 
-void AdjustVertexData(float x, float z)
+void AdjustVertexData(float x, float z)//WTF this do?
 {
     std::vector<float> fNewData(ARRAY_COUNT(vertices));
     memcpy(&fNewData[0], vertices, sizeof(vertices));
@@ -241,13 +241,91 @@ void printWelcome(){
 	sleep(1);
 
 }
+void initShaders (){
+
+	//generate VAO
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	// Create a Vertex Buffer Object and copy the vertex data to it
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	// Create the buffer, but don't load anything yet
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors)*sizeof(vertices)*sizeof(textures), NULL, GL_STATIC_DRAW);
+	// Load the vertex points
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
+	// Load the colors right after that
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices),sizeof(colors), colors);
+	//Load the textures after that
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices)+sizeof(colors),sizeof(textures), textures);//fixme
+	
+	glGenBuffers(1, &indexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		
+	// Make a shader
+	shaderProgramID = createShaders();
+	//use shader
+	glUseProgram(shaderProgramID);
+	
+	// Specify the layout of the vertex data
+	int offset = 0;
+	positionID = glGetAttribLocation(shaderProgramID, "s_vPosition");
+	glEnableVertexAttribArray(positionID);
+	//glVertexAttribPointer(positionID, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(offset));
+	
+	offset += sizeof(vertices);
+	colorID = glGetAttribLocation(shaderProgramID, "s_vColor");
+	glEnableVertexAttribArray(colorID);
+	//glVertexAttribPointer(colorID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(offset));
+	
+	//textures -- texcoords are missing!
+	offset += sizeof(vertices) + sizeof(colors);
+	GLuint texAttrib = glGetAttribLocation(shaderProgramID, "texcoord");
+	glEnableVertexAttribArray(texAttrib);
+	//glVertexAttribPointer(textureID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(offset));
+
+	////http://open.gl/content/code/c3_multitexture.txt -- texcoords are missing!
+	//GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+	//glEnableVertexAttribArray(texAttrib);
+	//glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
+	
+	//************************************************//http://open.gl/content/code/c3_multitexture.txt
+	//Load Textures
+	GLuint textures[1];
+	glGenTextures(1, textures);
+	
+	int width, height;
+	unsigned char* image;
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+        image = SOIL_load_image("rink.png", &width, &height, 0, SOIL_LOAD_RGB);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        SOIL_free_image_data(image);
+      glUniform1i(glGetUniformLocation(shaderProgramID, "texRink"), 0);
+      
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//************************************************//http://open.gl/textures
+
+	perspectiveMatrixID = glGetUniformLocation(shaderProgramID, "mP");
+	viewMatrixID = glGetUniformLocation(shaderProgramID, "mV");
+	modelMatrixID = glGetUniformLocation(shaderProgramID, "mM");
+}
 
 int main (int argc, char** argv) {
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE|GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
-	glutCreateWindow("Index Buffers");
+	glutCreateWindow("Project 2: GOAL!");
 	glutReshapeFunc(changeViewport);
 	glutDisplayFunc(render);
 	glewInit();
@@ -255,41 +333,10 @@ int main (int argc, char** argv) {
 	/*set up the matricies*/
 	initMatrices(); 
 
-	// Make a shader
-	shaderProgramID = createShaders();
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	// Create the buffer, but don't load anything yet
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors)*sizeof(vertices), NULL, GL_STATIC_DRAW);
-	// Load the vertex points
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
-	// Load the colors right after that
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices),sizeof(colors), colors);
-	
-
-
-	glGenBuffers(1, &indexBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	
-	positionID = glGetAttribLocation(shaderProgramID, "s_vPosition");
-	colorID = glGetAttribLocation(shaderProgramID, "s_vColor");
-	
-	perspectiveMatrixID = glGetUniformLocation(shaderProgramID, "mP");
-	viewMatrixID = glGetUniformLocation(shaderProgramID, "mV");
-	modelMatrixID = glGetUniformLocation(shaderProgramID, "mM");
-
-	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribPointer(colorID, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(vertices)));
+	initShaders();//
 	
 	glutKeyboardFunc(keyboard);
 
-	glUseProgram(shaderProgramID);
 	glEnableVertexAttribArray(positionID);
 	glEnableVertexAttribArray(colorID);
 	glutSpecialFunc(SpecialInput);
@@ -301,4 +348,3 @@ int main (int argc, char** argv) {
 	
 	return 0;
 }
-
