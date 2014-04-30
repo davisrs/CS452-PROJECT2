@@ -251,7 +251,7 @@ void initShaders (){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	// Create the buffer, but don't load anything yet
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors)*sizeof(vertices)*sizeof(textures), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors)+sizeof(vertices)+sizeof(textures), NULL, GL_STATIC_DRAW);
 	// Load the vertex points
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
 	// Load the colors right after that
