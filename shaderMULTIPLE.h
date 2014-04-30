@@ -41,10 +41,41 @@ bool compiledStatus(GLint shaderID){
 }
 
 
-GLuint createShaders(){
+GLuint createShaderRink(){
 
-	char* fragmentShaderSourceCode = readFile("fragmentShader.fsh");
+	char* vertexShaderSourceCode = readFile("vertexShaderRink.vsh");
+	char* fragmentShaderSourceCode = readFile("fragmentShaderRink.fsh");
+
+	GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShaderID, 1, (const GLchar**)&vertexShaderSourceCode, NULL);
+	glCompileShader(vertexShaderID);
+	bool compiledCorrectly = compiledStatus(vertexShaderID);
+	if (!compiledCorrectly) {
+		fprintf(stderr, "ERROR COMPLILING VERTEX SHADER\n");
+	}
+
+	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShaderID, 1, (const GLchar**)&fragmentShaderSourceCode, NULL);
+	glCompileShader(fragmentShaderID);	
+	compiledCorrectly = compiledStatus(fragmentShaderID);
+	if (!compiledCorrectly) {
+		fprintf(stderr, "ERROR COMPLILING FRAGMENT SHADER\n");
+	}
+
+
+	GLuint shaderID = glCreateProgram();
+	glAttachShader(shaderID, vertexShaderID);
+	glAttachShader(shaderID, fragmentShaderID);
+	glLinkProgram(shaderID);
+
+	return shaderID;
+}
+
+
+GLuint createShaderPuck(){
+
 	char* vertexShaderSourceCode = readFile("vertexShader.vsh");
+	char* fragmentShaderSourceCode = readFile("fragmentShader.fsh");
 
 	GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShaderID, 1, (const GLchar**)&vertexShaderSourceCode, NULL);
