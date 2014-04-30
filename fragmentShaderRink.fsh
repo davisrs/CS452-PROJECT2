@@ -9,6 +9,6 @@ out vec4 fColor;
 uniform sampler2D texRink;
 
 void main () {
-	//fColor = vec4(color,1.0)*texture(texRink, texCoord);//uncomment is death
+	//fColor = color*texture(texRink, texCoord);//uncomment is death
 	fColor = color;
 }

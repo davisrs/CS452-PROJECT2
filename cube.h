@@ -35,6 +35,17 @@ GLfloat colors[] = {
 
 };
 
+GLfloat textures[] = {
+	1.0,1.0,
+	1.0,1.0,
+	1.0,1.0,
+	1.0,1.0,
+	1.0,1.0,
+	1.0,1.0,
+	1.0,1.0,
+	1.0,1.0,
+};
+
 GLuint indices[] = {
 	0,	6,	4,
 	0,	2,	6,
@@ -50,7 +61,6 @@ GLuint indices[] = {
 	1,	7, 3
 
 };
-
 
 
 GLfloat puckVertices[] = {

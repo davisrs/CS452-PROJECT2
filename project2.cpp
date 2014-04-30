@@ -158,6 +158,8 @@ void initRink(){
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
 	// Load the colors right after that
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices),sizeof(colors), colors);
+	//Load the textures after that
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices)+sizeof(colors),sizeof(textures), textures);//fixme
 
 	glGenBuffers(1, &indexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
@@ -169,20 +171,34 @@ void initRink(){
 	//use shader
 	glUseProgram(shaderProgramRink);
 	// Specify the layout of the vertex data
+	int offset = 0;
 	positionID = glGetAttribLocation(shaderProgramRink, "s_vPosition");
 	glEnableVertexAttribArray(positionID);
 	//glVertexAttribPointer(positionID, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
-	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(offset));
 	
+	offset += sizeof(vertices);
 	colorID = glGetAttribLocation(shaderProgramRink, "s_vColor");
 	glEnableVertexAttribArray(colorID);
 	//glVertexAttribPointer(colorID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
-	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(vertices)));
+	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(offset));
+	
+	//textures -- texcoords are missing!
+	offset += sizeof(vertices) + sizeof(colors);
+	GLuint texAttrib = glGetAttribLocation(shaderProgramRink, "texcoord");
+	glEnableVertexAttribArray(texAttrib);
+	//glVertexAttribPointer(textureID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(offset));
+
+	////http://open.gl/content/code/c3_multitexture.txt -- texcoords are missing!
+	//GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+	//glEnableVertexAttribArray(texAttrib);
+	//glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
 	
 	//************************************************//http://open.gl/content/code/c3_multitexture.txt
 	//Load Textures
-	GLuint textures[2];
-	glGenTextures(2, textures);
+	GLuint textures[1];
+	glGenTextures(1, textures);
 	
 	int width, height;
 	unsigned char* image;
