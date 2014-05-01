@@ -54,6 +54,7 @@ float thetaX = 0.0f;
 float scaleAmount = 0.5f;
 float puckLR = 0.5f;
 float puckFB = 2.0f;
+//speed = 0.01f;
 float speed =0.009f;
 float startSpeed=speed;
 float depth = -2.0f;
@@ -91,13 +92,15 @@ void checkGoal(){
 	if(puckFB<-1.8f){
 
 		if(puckLR < -0.25 || puckLR > (0.25-0.1)){
-			
-			speed = 0.01f;
-			if(score>highScore)
-				highScore = score;
-			score = 0;
-
 			printf("\nNO GOAL!\n\nGame over.....\n\n");
+			if(score>highScore){
+				printf("You beat the old high score by %d points!\n", score-highScore);
+				highScore = score;	
+			}
+			else{
+				printf("Your score for this round was: %d \n", score);
+			}
+			score = 0;
 			printf("Your high score is: %d\n", highScore);
 			speed = startSpeed;
 			printf("\nRestarting the game... Good luck!\n");
@@ -228,6 +231,7 @@ void keyboard( unsigned char key, int x, int y ){
 		break;
 	case 033:
 	    exit( EXIT_SUCCESS );
+	    //exit(0);
 	    break;
     }
 
