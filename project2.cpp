@@ -104,7 +104,7 @@ void checkGoal(){
 
 		}
 		else{
-			printf("\nGOAL!! Score: %d, Time to speed up the puck!!\n",score+1);
+			printf("\nGOAL!! Score: %d vs. %d, Time to speed up the puck!!\n",score+1, highScore);
 			speed += 0.001f;
 			score++;
 		
@@ -220,6 +220,9 @@ void keyboard( unsigned char key, int x, int y ){
 	case 'z'://approach goal
 		depth += 0.1;
 		break;
+	case 'x'://un-approach goal
+		depth -= 0.1;
+		break;
 	case 'q'://zoom in
 		scaleAmount += 0.1;
 		break;
@@ -257,6 +260,17 @@ void printWelcome(){
 	printf("You want to get as many goals as possible\n");
 	printf("Each time you get a goal, the shots get faster!\n");
 	printf("Your score is the number of goals you get\n");
+	printf("Hit the up arrow to shoot the puck\n");
+	printf("Tap the left and right arrows to move the puck into the goal after you shoot\n");
+	printf("-You must get inside the goal for it to count! If you hit the sides it counts as a miss and is game over!-\n");
+	
+	printf("*Manipulating the models*\n");
+	printf("a,d,w,s move the camera\n");
+	printf("k,l rotates the rink\n");
+	printf("o,p flips the rink\n");
+	printf("e,q zooms in/out\n");
+	printf("z,x moves you toward/away from the goal\n");
+	printf("escape quits\n");
 	printf("Good luck!!\n");
 	printf("Starting in 3.... 2.... 1....\n");
 	sleep(1);
@@ -348,7 +362,7 @@ int main (int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE|GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
-	glutCreateWindow("Project 2: GOAL!");
+	glutCreateWindow("Project 2: hot shot!");
 	glutReshapeFunc(changeViewport);
 	glutDisplayFunc(render);
 	glewInit();
