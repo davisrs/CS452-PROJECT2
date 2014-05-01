@@ -12,14 +12,14 @@ const int num_vertices = 16;
 
 GLfloat vertices[] = {
 //rink
-	 0.00f,  0.00f, -2.0f,  //0      
-	 2.00f,  0.00f, -2.0f,  //1       
-	 0.00f,  0.25f, -2.0f,  //2     Top Left	0,1
-	 2.00f,  0.25f, -2.0f,  //3     Top Right	1,1
-	 0.00f,  0.00f,  2.0f,  //4     
-	 2.00f,  0.00f,  2.0f,  //5       
-	 0.00f,  0.25f,  2.0f,  //6     Bot Left	0,0
-	 2.00f,  0.25f,  2.0f,  //7     Bot Right	1,0
+	 0.00f,  0.00f, -2.0f,  //0 bbl    (Key:bottom/top.back/front.left/right)  
+	 2.00f,  0.00f, -2.0f,  //1 bbr      
+	 0.00f,  0.25f, -2.0f,  //2 tbr    Top Left	0,1
+	 2.00f,  0.25f, -2.0f,  //3 tbl    Top Right	1,1
+	 0.00f,  0.00f,  2.0f,  //4 bfl    
+	 2.00f,  0.00f,  2.0f,  //5 bfr      
+	 0.00f,  0.25f,  2.0f,  //6 tfl    Bot Left	0,0
+	 2.00f,  0.25f,  2.0f,  //7 tfr    Bot Right	1,0
 
 //puck
 	 1.00f,  0.25f,  0.0f,         
@@ -124,14 +124,14 @@ GLuint indices[] = {
 GLfloat textures[] = {
 	//rink
 	
-	0.0,0.0,//0
-	0.0,0.0,//1
-	0.0,1.0,//2
-	1.0,1.0,//3
+	0.0,1.0,//0
+	1.0,1.0,//1
+	0.0,1.0,//2 0,1 top left
+	1.0,1.0,//3 1,1 top right
 	0.0,0.0,//4
-	0.0,0.0,//5
-	0.0,0.0,//6
-	1.0,0.0,//7
+	1.0,0.0,//5
+	0.0,0.0,//6 0,0 bot left
+	1.0,0.0,//7 1,0 bot right
 	//puck
 	0.0,0.0,
 	0.0,0.0,
