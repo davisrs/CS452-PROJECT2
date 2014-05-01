@@ -54,7 +54,7 @@ float thetaX = 0.0f;
 float scaleAmount = 0.5f;
 float puckLR = 0.5f;
 float puckFB = 2.0f;
-float speed =0.002f;
+float speed =0.009f;
 float startSpeed=speed;
 float depth = -2.0f;
 
@@ -88,7 +88,7 @@ void changeViewport(int w, int h){
 
 void checkGoal(){
 
-	if(puckFB<-2.0f){
+	if(puckFB<-1.8f){
 
 		if(puckLR < -0.25 || puckLR > (0.25-0.1)){
 			
@@ -358,12 +358,12 @@ void initShaders (){
 }
 
 int main (int argc, char** argv) {
-	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE|GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
 	glutCreateWindow("Project 2: hot shot!");
 	glutReshapeFunc(changeViewport);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	glutDisplayFunc(render);
 	glewInit();
 

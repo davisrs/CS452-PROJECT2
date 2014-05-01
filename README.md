@@ -1,8 +1,9 @@
 CS452-PROJECT2
+
+Alex Kelly & Richard Davis
+
 ==============
 Due Friday April 18
-
-Made By: Alexander Kelly and Richard Davis
 
 Note: This program requires "Simple OpenGL Image Library" (SOIL) to be on your system in order to load the texture's image file, get it here
 
